@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Standard Work & Yamazumi Studio</title>
+<style>
+:root{
+  --bg:#f4f7fb;--panel:#ffffff;--text:#172033;--muted:#667085;--line:#d9e0ea;
+  --accent:#315efb;--danger:#d92d20;--ok:#039855;--warn:#dc6803;--header:#0f172a;
+  --shadow:0 10px 30px rgba(15,23,42,.08);--radius:14px;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.topbar{height:64px;background:var(--header);color:#fff;display:flex;align-items:center;gap:14px;padding:0 18px;position:sticky;top:0;z-index:20}
+.brand{font-weight:800;letter-spacing:.2px;white-space:nowrap}.brand small{font-weight:500;opacity:.65;margin-left:8px}
+.spacer{flex:1}.btn{border:1px solid transparent;border-radius:9px;padding:8px 12px;background:#fff;color:#172033}.btn:hover{filter:brightness(.98)}
+.btn.primary{background:var(--accent);color:#fff}.btn.ghost{background:transparent;border-color:#475569;color:#fff}.btn.soft{background:#eef2ff;color:#253ea7}.btn.danger{background:#fee4e2;color:#b42318}.btn.small{padding:5px 9px;font-size:12px}
+select,input,textarea{border:1px solid #cfd7e3;border-radius:8px;background:#fff;padding:7px 8px;color:#172033} input[type=number]{width:86px}.topbar select{background:#111c34;color:#fff;border-color:#334155}
+.nav{display:flex;gap:4px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:64px;z-index:15}.nav button{border:0;background:transparent;padding:9px 13px;border-radius:9px;color:#475467;font-weight:650}.nav button.active{background:#eef2ff;color:#253ea7}
+.page{display:none;padding:16px}.page.active{display:block}.grid{display:grid;grid-template-columns:minmax(680px,1.2fr) minmax(520px,1fr);gap:14px}.panel{background:var(--panel);border:1px solid #e4e8ef;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.panel-h{padding:12px 14px;border-bottom:1px solid #e9edf3;display:flex;align-items:center;gap:10px}.panel-h h3{margin:0;font-size:15px}.panel-b{padding:12px 14px}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));gap:10px;margin-bottom:14px}.kpi{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:11px 12px}.kpi .label{font-size:12px;color:var(--muted)}.kpi .value{font-size:22px;font-weight:800;margin-top:3px}.kpi .sub{font-size:11px;color:#98a2b3;margin-top:2px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.toolbar .group{display:flex;align-items:center;gap:6px;padding-right:8px;border-right:1px solid #e5e7eb}.toolbar label{font-size:12px;color:#667085}.status-dot{width:9px;height:9px;border-radius:99px;background:var(--ok);display:inline-block}
+.table-wrap{overflow:auto;max-height:520px;border-top:1px solid #eef2f6} table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:12px} th,td{border-right:1px solid #edf1f5;border-bottom:1px solid #edf1f5;padding:6px;vertical-align:middle;background:#fff} th{position:sticky;top:0;z-index:3;background:#f8fafc;color:#475467;font-weight:750;white-space:nowrap} td input,td select{padding:5px 6px;border-radius:6px;font-size:12px;min-width:70px} td input[type=text]{min-width:120px}.row-actions{display:flex;gap:4px}
+.chart-tabs{display:flex;gap:4px}.chart-tabs button{border:0;background:#f2f4f7;padding:6px 9px;border-radius:7px;font-size:12px}.chart-tabs button.active{background:#dfe7ff;color:#2445b8}.chart-area{height:560px;overflow:auto;background:linear-gradient(#fff,#fbfcfe);position:relative}.chart-area svg{display:block;transform-origin:top left}.chart-area.fit-mode{overflow:hidden}.chart-area.fit-mode svg{max-width:none}.zoom-controls{display:flex;gap:4px}.zoom-controls .btn{min-width:30px;padding:5px 8px}.load-summary{margin-top:8px}.load-summary .panel-h{min-height:30px;padding:5px 0;border-bottom:0}.load-summary .panel-h h3{font-size:12px}.load-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px}.load-card{border:1px solid #e5eaf1;border-radius:8px;padding:7px;background:#fff}.load-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px;font-size:10.5px}.load-head>span{font-size:9.5px;color:#667085}.stackbar{display:flex;height:14px;border-radius:5px;overflow:hidden;background:#eef2f6;border:1px solid #dde3ea}.stackbar span{height:100%;display:block;min-width:0}.load-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 8px;margin-top:5px;font-size:9.5px;color:#475467}.load-legend div{display:flex;justify-content:space-between;gap:6px}.chart-area.fit-mode svg{max-width:none}.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:#475467}.leg{display:flex;align-items:center;gap:5px}.swatch{width:14px;height:8px;border-radius:3px;background:#888}.line-swatch{width:18px;border-top:2px dashed #111}
+.sidecard{background:#f8fafc;border:1px solid #e5eaf1;border-radius:8px;padding:7px 9px;margin-top:7px}.sidecard.collapsed{padding:5px 9px}.sidecard .calc-head{display:flex;align-items:center;gap:8px}.sidecard .calc-head h4{margin:0;font-size:11px}.sidecard .collapse-btn{margin-left:auto;border:0;background:transparent;color:#667085;font-size:15px;line-height:1;cursor:pointer;padding:2px 5px}.sidecard .calc-body{margin-top:5px}.sidecard.collapsed .calc-body{display:none}.calcline{display:flex;justify-content:space-between;gap:12px;padding:2px 0;border-bottom:1px dashed #e2e8f0;font-size:10px}.calcline:last-child{border-bottom:0}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.scenario-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.scenario-card{border:1px solid #dfe4eb;border-radius:12px;padding:12px;background:#fff}.scenario-card.active{outline:2px solid #91a7ff}.scenario-card h4{margin:0 0 6px}.scenario-card .meta{font-size:12px;color:#667085;margin-bottom:10px}.scenario-actions{display:flex;gap:6px;flex-wrap:wrap}
+.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.compare-card{border:1px solid #e3e8ef;border-radius:12px;background:#fff;padding:12px}.compare-card h4{margin:0 0 8px}.metric{display:flex;justify-content:space-between;border-bottom:1px solid #eef2f6;padding:5px 0;font-size:12px}.metric:last-child{border-bottom:0}.barline{height:9px;background:#eef2f6;border-radius:99px;overflow:hidden;margin:5px 0}.barline span{display:block;height:100%;background:#6680ff;border-radius:99px}
+.guide{display:grid;grid-template-columns:250px 1fr;gap:14px}.guide-nav{background:#fff;border:1px solid #e5e9f0;border-radius:12px;padding:8px;height:max-content;position:sticky;top:128px}.guide-nav button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:8px;border-radius:7px}.guide-nav button:hover{background:#f3f5f8}.guide-content{background:#fff;border:1px solid #e5e9f0;border-radius:12px;padding:18px;line-height:1.6}.guide-content h2{margin-top:0}.guide-content code{background:#f2f4f7;padding:2px 5px;border-radius:5px}.guide-content .formula{background:#f8fafc;border-left:4px solid #6680ff;padding:10px 12px;border-radius:8px;margin:10px 0}.guide-content table{width:100%;min-width:0}.guide-content th{position:static}
+#chartPanel:fullscreen{background:#fff;border:0;border-radius:0;display:flex;flex-direction:column;width:100vw;height:100vh}#chartPanel:fullscreen .panel-h{flex:0 0 auto}#chartPanel:fullscreen .panel-b{display:flex;flex-direction:column;min-height:0;flex:1}#chartPanel:fullscreen .chart-area{height:auto;min-height:0;flex:1}#chartPanel:fullscreen .sidecard{max-height:24vh;overflow:auto}.developer-footer{padding:12px 18px 18px;text-align:center;color:#667085;font-size:12px}.developer-footer strong{color:#344054}.copyright-note{margin-top:24px;padding-top:14px;border-top:1px solid #e5e9f0;color:#667085;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:60}.modal.show{display:flex}.modal-card{width:min(560px,92vw);background:#fff;border-radius:14px;box-shadow:0 30px 70px rgba(0,0,0,.25);padding:18px}.modal-card h3{margin:0 0 12px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-grid label{font-size:12px;color:#667085}.form-grid label span{display:block;margin-bottom:4px}.form-grid input,.form-grid select{width:100%}
+.toast{position:fixed;right:18px;bottom:18px;background:#101828;color:#fff;border-radius:10px;padding:10px 14px;box-shadow:var(--shadow);display:none;z-index:100;font-size:13px}.toast.show{display:block}
+@media(max-width:1200px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.topbar{height:auto;flex-wrap:wrap;padding:10px}.nav{top:96px;overflow:auto}.page{padding:10px}.kpis{grid-template-columns:repeat(2,1fr)}.guide{grid-template-columns:1fr}.guide-nav{position:static}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">Standard Work & Yamazumi Studio <small>V1.4</small></div>
+  <span class="status-dot" title="Local app"></span>
+  <select id="scenarioSelect" title="Scenario"></select>
+  <div class="spacer"></div>
+  <button class="btn ghost" id="newProjectBtn">New Project</button>
+  <button class="btn ghost" id="saveBtn">Save Project</button>
+  <button class="btn ghost" id="loadBtn">Load Project</button>
+  <input id="loadInput" type="file" accept=".yamproj,.json" hidden />
+  <select id="languageSelect"><option value="en">EN</option><option value="th">TH</option></select>
+</div>
+<div class="nav" id="nav"></div>
+
+<section class="page active" id="workPage">
+  <div class="kpis" id="kpis"></div>
+  <div class="grid">
+    <div class="panel">
+      <div class="panel-h">
+        <h3 data-i18n="workData">Work Data</h3>
+        <div class="spacer"></div>
+        <div class="toolbar">
+          <div class="group"><label data-i18n="unit">Unit</label><select id="timeUnit"><option value="sec">sec</option><option value="min">min</option></select></div>
+          <div class="group"><label data-i18n="taktMode">Takt Mode</label><select id="taktMode"><option value="manual">Manual</option><option value="auto">Auto</option></select></div>
+          <button class="btn soft small" id="scenarioSettingsBtn" data-i18n="scenarioSettings">Scenario Settings</button>
+          <button class="btn soft small" id="importExcelBtn" data-i18n="importExcel">Import Excel</button><input id="excelInput" type="file" accept=".xlsx,.xls" hidden />
+          <button class="btn primary small" id="addRowBtn" data-i18n="addProcess">+ Process</button>
+        </div>
+      </div>
+      <div class="table-wrap"><table id="processTable"></table></div>
+    </div>
+    <div class="panel" id="chartPanel">
+      <div class="panel-h">
+        <h3 data-i18n="charts">Charts</h3>
+        <div class="chart-tabs" id="chartTabs">
+          <button data-mode="standard" class="active" data-i18n="standardView">Standard Work Combination</button>
+          <button data-mode="classic" data-i18n="classicView">Classic Connected Lines</button>
+          <button data-mode="yamazumi" data-i18n="yamazumiView">Yamazumi</button>
+        </div>
+        <div class="spacer"></div>
+        <div class="zoom-controls"><button class="btn soft small" id="zoomOutBtn" title="Zoom Out">−</button><button class="btn soft small" id="zoomResetBtn" title="Reset Zoom">100%</button><button class="btn soft small" id="zoomInBtn" title="Zoom In">+</button></div><button class="btn soft small" id="fitChartBtn" data-i18n="fit">Fit</button>
+        <button class="btn soft small" id="fullscreenChartBtn" data-i18n="fullscreen">Full Screen</button>
+      </div>
+      <div class="panel-b">
+        <div class="legend" id="legend"></div>
+        <div class="chart-area" id="chartArea"></div>
+        <div class="sidecard" id="calcCard"></div><div class="load-summary" id="operatorLoadSummary"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="scenariosPage">
+  <div class="panel">
+    <div class="panel-h"><h3 data-i18n="scenarios">Scenarios</h3><div class="spacer"></div><button class="btn soft" id="blankScenarioBtn" data-i18n="blankScenario">Blank Scenario</button><button class="btn primary" id="duplicateScenarioBtn" data-i18n="duplicateScenario">Duplicate Current</button></div>
+    <div class="panel-b"><div class="scenario-list" id="scenarioList"></div></div>
+  </div>
+</section>
+
+<section class="page" id="comparePage">
+  <div class="panel">
+    <div class="panel-h"><h3 data-i18n="compare">Compare Scenarios</h3><div class="spacer"></div><span style="font-size:12px;color:#667085" data-i18n="compareHint">Select scenarios to compare.</span></div>
+    <div class="panel-b"><div class="toolbar" id="compareChecks" style="margin-bottom:12px"></div><div class="compare-grid" id="compareGrid"></div></div>
+  </div>
+</section>
+
+<section class="page" id="guidePage">
+  <div class="guide"><div class="guide-nav" id="guideNav"></div><div class="guide-content" id="guideContent"></div></div>
+</section>
+
+<div class="modal" id="settingsModal"><div class="modal-card">
+  <h3 data-i18n="scenarioSettings">Scenario Settings</h3>
+  <div class="form-grid">
+    <label><span data-i18n="scenarioName">Scenario Name</span><input id="setName" /></label>
+    <label><span data-i18n="timeUnit">Time Unit</span><select id="setUnit"><option value="sec">sec</option><option value="min">min</option></select></label>
+    <label><span data-i18n="taktMode">Takt Mode</span><select id="setTaktMode"><option value="manual">Manual</option><option value="auto">Auto</option></select></label>
+    <label><span data-i18n="manualTakt">Manual Takt</span><input id="setManualTakt" type="number" min="0" step="0.01" /></label>
+    <label><span data-i18n="availableTime">Available Production Time</span><input id="setAvailable" type="number" min="0" step="0.01" /></label>
+    <label><span data-i18n="requiredQty">Required Quantity</span><input id="setDemand" type="number" min="0" step="1" /></label>
+    <label><span data-i18n="commonQtyMode">Common Qty Mode</span><select id="setCommonQtyMode"><option value="auto" data-i18n="autoLCM">Auto (LCM Set Qty)</option><option value="manual" data-i18n="manualOverride">Manual Override</option></select></label>
+    <label><span data-i18n="batchQty">Batch / Common Qty</span><input id="setCommonQty" type="number" min="1" step="1" /></label>
+  </div>
+  <div class="modal-actions"><button class="btn" id="cancelSettings" data-i18n="cancel">Cancel</button><button class="btn primary" id="applySettings" data-i18n="apply">Apply</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+<div class="developer-footer">🛠️© 2026 <strong>Boonyarit Chotisatkul</strong></div>
+
+<script>
+const I18N={
+ en:{work:'Work Data / Chart',scenarios:'Scenarios',compare:'Compare',guide:'User Guide & Calculation',workData:'Work Data',unit:'Unit',timeUnit:'Time Unit',taktMode:'Takt Mode',scenarioSettings:'Scenario Settings',addProcess:'+ Process',charts:'Charts',standardView:'Standard Work Combination',classicView:'Classic Connected Lines',yamazumiView:'Yamazumi',fit:'Fit to View',fullscreen:'Full Screen',exitFullscreen:'Exit Full Screen',blankScenario:'Blank Scenario',duplicateScenario:'Duplicate Current',compareHint:'Select scenarios to compare.',scenarioName:'Scenario Name',manualTakt:'Manual Takt',availableTime:'Available Production Time',requiredQty:'Required Quantity',cancel:'Cancel',apply:'Apply',actualLineCT:'Actual Line C/T',targetTakt:'Target / Takt',bottleneck:'Bottleneck',waiting:'Waiting',walking:'Walking',operators:'Operators',manual:'Manual',auto:'Auto',auto2:'Auto 2',frequency:'Frequency',auto2Mode:'Auto 2 Mode',operator:'Operator',workSeq:'Work Seq',usageSeq:'Usage Seq',process:'Process',machine:'Machine',setQty:'Set Qty',basis:'Basis',walk1:'Walk 1',walk2:'Walk 2',walk3:'Walk 3',walk4:'Walk 4',walk5:'Walk 5',w1c:'Walk 1 Comment',w2c:'Walk 2 Comment',w3c:'Walk 3 Comment',w4c:'Walk 4 Comment',w5c:'Walk 5 Comment',ol:'OL',overlap:'Overlap',handling:'Auto Handling',comment:'Comment',actions:'Actions',perPiece:'Per Piece',perSet:'Per Set',replace:'Replace',add:'Add',wait:'Wait',skip:'Skip / Continue',off:'Off',on:'On',newScenario:'New Scenario',delete:'Delete',open:'Open',duplicate:'Duplicate',newProject:'New Project',saved:'Project saved',loaded:'Project loaded',calcTitle:'How was this calculated?',noSelection:'Click a chart segment or process row to inspect the calculation.',workload:'Workload',machineAuto:'Machine Auto',workCategory:'Work Category',load:'Load',unload:'Unload',inspection:'Inspection',other:'Other',operatorLoadSummary:'Operator Load Summary',commonQty:'Common Production Qty',commonQtyMode:'Common Qty Mode',autoLCM:'Auto (LCM Set Qty)',manualOverride:'Manual Override',batchQty:'Batch / Common Qty',batchCT:'Batch C/T',perPieceCT:'C/T per piece',productiveLoad:'Productive Load',idleLoad:'Idle / Waiting',scenarioDeleted:'Scenario deleted',cannotDeleteLast:'At least one scenario is required.',projectReset:'New project created',invalidProject:'Invalid project file',language:'Language',importExcel:'Import Excel',excelImported:'Excel imported',excelImportError:'Could not import Excel file',excelLibMissing:'Excel parser is unavailable. Connect to the internet and reload once, or use the packaged parser version.'},
+ th:{work:'ข้อมูลงาน / กราฟ',scenarios:'Scenario',compare:'เปรียบเทียบ',guide:'คู่มือและการคำนวณ',workData:'ข้อมูลงาน',unit:'หน่วย',timeUnit:'หน่วยเวลา',taktMode:'โหมด Takt',scenarioSettings:'ตั้งค่า Scenario',addProcess:'+ Process',charts:'กราฟ',standardView:'Standard Work Combination',classicView:'กราฟเส้นต่อเนื่อง',yamazumiView:'Yamazumi',fit:'จัดให้พอดี',fullscreen:'เต็มหน้าจอ',exitFullscreen:'ออกจากเต็มหน้าจอ',blankScenario:'Scenario เปล่า',duplicateScenario:'Duplicate ปัจจุบัน',compareHint:'เลือก Scenario ที่ต้องการเปรียบเทียบ',scenarioName:'ชื่อ Scenario',manualTakt:'Takt ที่กรอกเอง',availableTime:'เวลาผลิตที่ใช้ได้',requiredQty:'จำนวนที่ต้องการ',cancel:'ยกเลิก',apply:'ใช้ค่า',actualLineCT:'Actual Line C/T',targetTakt:'Target / Takt',bottleneck:'คอขวด',waiting:'เวลารอ',walking:'เวลาเดิน',operators:'Operator',manual:'Manual',auto:'Auto',auto2:'Auto 2',frequency:'ความถี่',auto2Mode:'โหมด Auto 2',operator:'ผู้ปฏิบัติงาน',workSeq:'ลำดับงาน',usageSeq:'ลำดับใช้งาน',process:'กระบวนการ',machine:'เครื่องจักร',setQty:'จำนวนต่อ Set',basis:'ฐานเวลา',walk1:'เดิน 1',walk2:'เดิน 2',walk3:'เดิน 3',walk4:'เดิน 4',walk5:'เดิน 5',w1c:'Comment เดิน 1',w2c:'Comment เดิน 2',w3c:'Comment เดิน 3',w4c:'Comment เดิน 4',w5c:'Comment เดิน 5',ol:'OL',overlap:'Overlap',handling:'การจัดการ Auto',comment:'Comment',actions:'จัดการ',perPiece:'ต่อชิ้น',perSet:'ต่อ Set',replace:'แทนที่',add:'บวกเพิ่ม',wait:'รอ',skip:'ข้าม / ทำงานต่อ',off:'ปิด',on:'เปิด',newScenario:'Scenario ใหม่',delete:'ลบ',open:'เปิด',duplicate:'ทำสำเนา',newProject:'Project ใหม่',saved:'บันทึก Project แล้ว',loaded:'เปิด Project แล้ว',calcTitle:'คำนวณอย่างไร?',noSelection:'คลิกส่วนของกราฟหรือแถว Process เพื่อดูรายละเอียดการคำนวณ',workload:'ภาระงาน',machineAuto:'เวลา Auto เครื่องจักร',workCategory:'ประเภทงาน',load:'Load',unload:'Unload',inspection:'Inspection',other:'อื่น ๆ',operatorLoadSummary:'สรุปโหลด Operator',commonQty:'จำนวนผลิตฐานร่วม',commonQtyMode:'โหมดจำนวนผลิตฐานร่วม',autoLCM:'อัตโนมัติ (LCM Set Qty)',manualOverride:'กำหนดเอง',batchQty:'จำนวนชิ้นต่อ Batch',batchCT:'Batch C/T',perPieceCT:'C/T ต่อชิ้น',productiveLoad:'โหลดงาน',idleLoad:'Idle / Waiting',scenarioDeleted:'ลบ Scenario แล้ว',cannotDeleteLast:'ต้องมีอย่างน้อย 1 Scenario',projectReset:'สร้าง Project ใหม่แล้ว',invalidProject:'ไฟล์ Project ไม่ถูกต้อง',language:'ภาษา',importExcel:'นำเข้า Excel',excelImported:'นำเข้า Excel แล้ว',excelImportError:'ไม่สามารถนำเข้าไฟล์ Excel ได้',excelLibMissing:'ตัวอ่าน Excel ยังไม่พร้อม กรุณาเชื่อมต่ออินเทอร์เน็ตและเปิดใหม่หนึ่งครั้ง หรือใช้เวอร์ชันที่มี parser รวมอยู่'}
+};
+const COLORS={manual:'#3b82f6',load:'#60a5fa',unload:'#1d4ed8',inspection:'#8b5cf6',other:'#64748b',walking:'#f59e0b',waiting:'#cbd5e1',auto:'#10b981',auto2:'#14b8a6',overlap:'#06b6d4',takt:'#111827',line:'#d92d20'};
+const operatorColors=['#334155','#475569','#64748b','#94a3b8','#0f172a','#475569','#64748b','#94a3b8'];
+const MANUAL_CATEGORIES=['manual','load','unload','inspection','other'];
+let state={project:null,chartMode:'standard',chartFit:false,chartZoom:1,calcCollapsed:false,selectedProcessId:null,compareSelected:new Set()};
+const uid=()=>Math.random().toString(36).slice(2,9);
+function defaultProcess(i=1){return {id:uid(),operator:1,workSeq:i,usageSeq:1,process:`Process ${i}`,machine:`MC-${String(i).padStart(2,'0')}`,setQty:1,basis:'perSet',category:'manual',manual:5,auto:20,auto2:0,frequency:0,auto2Mode:'replace',walk:[2,0,0,0,0],walkComment:['','','','',''],ol:false,overlap:0,handling:'wait',comment:''}}
+function defaultScenario(name='Current'){return {id:uid(),name,timeUnit:'sec',taktMode:'manual',manualTakt:60,availableTime:25200,requiredQty:420,commonQtyMode:'auto',commonQtyOverride:1,processes:[defaultProcess(1),{...defaultProcess(2),id:uid(),operator:1,workSeq:2,process:'Inspection',category:'inspection',machine:'MC-02',manual:8,auto:15,walk:[3,0,0,0,0]},{...defaultProcess(3),id:uid(),operator:2,workSeq:1,process:'Load / Unload',category:'load',machine:'MC-03',manual:12,auto:25,walk:[4,0,0,0,0]}]}}
+function newProject(){return {version:1,app:'Standard Work & Yamazumi Studio',language:'en',activeScenarioId:null,scenarios:[defaultScenario('Current')]}}
+function init(){state.project=newProject();state.project.activeScenarioId=state.project.scenarios[0].id;state.compareSelected.add(state.project.activeScenarioId);bind();renderAll();runSelfTests();}
+function t(k){return (I18N[state.project.language]||I18N.en)[k]||k}
+function activeScenario(){return state.project.scenarios.find(s=>s.id===state.project.activeScenarioId)||state.project.scenarios[0]}
+function toSec(v,unit){v=Number(v)||0;return unit==='min'?v*60:v}
+function fromSec(v,unit){return unit==='min'?v/60:v}
+function fmtSec(v,unit=activeScenario().timeUnit){const n=fromSec(v,unit);return `${Number(n.toFixed(2))} ${unit}`}
+function effectiveTime(p,key,scenario){let v=Number(p[key])||0;if(p.basis==='perPiece')v*=Math.max(1,Number(p.setQty)||1);return toSec(v,scenario.timeUnit)}
+function calcTaktSec(s){if(s.taktMode==='auto'){const avail=toSec(s.availableTime,s.timeUnit);return (Number(s.requiredQty)||0)>0?avail/Number(s.requiredQty):0}return toSec(s.manualTakt,s.timeUnit)}
+function gcd(a,b){a=Math.abs(Math.round(a));b=Math.abs(Math.round(b));while(b){const t=b;b=a%b;a=t}return a||1}
+function lcm(a,b){a=Math.max(1,Math.round(a));b=Math.max(1,Math.round(b));return Math.abs(a*b)/gcd(a,b)}
+function commonProductionQty(s){if(s.commonQtyMode==='manual' && Number(s.commonQtyOverride)>0)return Math.min(1000,Math.max(1,Math.round(Number(s.commonQtyOverride))));const qs=s.processes.map(p=>Math.max(1,Math.round(Number(p.setQty)||1)));return Math.min(1000,qs.reduce((a,b)=>lcm(a,b),1))}
+function calculateScenario(s){
+ const commonQty=commonProductionQty(s); const machineReady={}; const opTime={}; const opSegments={}; const operatorLoads={}; const processResults={}; const machineSegments={}; let totalAuto=0,totalWalk=0,totalWait=0,totalManual=0;
+ const rows=[...s.processes].sort((a,b)=>(Number(a.operator)-Number(b.operator))||(Number(a.workSeq)-Number(b.workSeq))||(Number(a.usageSeq)-Number(b.usageSeq)));
+ const operators=[...new Set(rows.map(p=>String(p.operator||1)))];
+ const occurrenceCounter={};
+ operators.forEach(op=>{opTime[op]=0;opSegments[op]=[];operatorLoads[op]={manual:0,load:0,unload:0,inspection:0,other:0,walking:0,waiting:0};machineSegments[op]={}});
+ // Simulate one common production batch. A process with Set Qty=N executes once every N produced pieces.
+ for(let pieceCycle=1; pieceCycle<=commonQty; pieceCycle++){
+   for(const p of rows){
+     const setQty=Math.max(1,Math.round(Number(p.setQty)||1));
+     if((pieceCycle-1)%setQty!==0)continue;
+     const op=String(p.operator||1); const occ=(occurrenceCounter[p.id]||0)+1; occurrenceCounter[p.id]=occ;
+     let start=opTime[op]; const manual=effectiveTime(p,'manual',s); const baseAuto=effectiveTime(p,'auto',s); const auto2=effectiveTime(p,'auto2',s);
+     const freq=Math.max(0,Number(p.frequency)||0); const trigger=freq>0 && occ%freq===0 && auto2>0; const autoActual=trigger?(p.auto2Mode==='add'?baseAuto+auto2:auto2):baseAuto;
+     const machine=p.machine||`__${p.id}`; const ready=autoActual>0?(machineReady[machine]||0):0; let wait=0;
+     if(autoActual>0 && p.handling==='wait' && start<ready){let allowed=0;if(p.ol){allowed=toSec(Number(p.overlap)||0,s.timeUnit);if(!allowed)allowed=Math.max(0,ready-start)}wait=Math.max(0,ready-start-allowed);start+=wait;opTime[op]+=wait;if(wait){opSegments[op].push({type:'waiting',start:start-wait,end:start,pid:p.id,label:p.process,pieceCycle,occurrence:occ});operatorLoads[op].waiting+=wait}}
+     const mStart=start,mEnd=start+manual; const cat=MANUAL_CATEGORIES.includes(p.category)?p.category:'manual';
+     if(manual){opSegments[op].push({type:cat,start:mStart,end:mEnd,pid:p.id,label:p.process,pieceCycle,occurrence:occ});operatorLoads[op][cat]+=manual} opTime[op]=mEnd; totalManual+=manual;
+     const autoStart=mEnd,autoEnd=mEnd+autoActual; if(autoActual>0)machineReady[machine]=autoEnd; totalAuto+=autoActual;
+     if(autoActual){if(!machineSegments[op][machine])machineSegments[op][machine]=[];machineSegments[op][machine].push({start:autoStart,end:autoEnd,pid:p.id,label:p.process,trigger,pieceCycle,occurrence:occ})}
+     const usage=Math.min(5,Math.max(1,Number(p.usageSeq)||1)); const walkRaw=(p.walk||[])[usage-1] ?? (p.walk||[])[0] ?? 0; const walk=toSec(Number(walkRaw)||0,s.timeUnit); const wStart=opTime[op],wEnd=wStart+walk;
+     if(walk){opSegments[op].push({type:'walking',start:wStart,end:wEnd,pid:p.id,label:p.walkComment?.[usage-1]||p.process,pieceCycle,occurrence:occ});operatorLoads[op].walking+=walk} opTime[op]=wEnd; totalWalk+=walk; totalWait+=wait;
+     if(!processResults[p.id])processResults[p.id]={manual:0,baseAuto:0,auto2:0,autoActual:0,wait:0,walk:0,executions:0,triggers:0,occurrences:[]};
+     const pr=processResults[p.id];pr.manual+=manual;pr.baseAuto+=baseAuto;pr.auto2+=auto2;pr.autoActual+=autoActual;pr.wait+=wait;pr.walk+=walk;pr.executions++;if(trigger)pr.triggers++;pr.occurrences.push({pieceCycle,occurrence:occ,start:mStart,end:wEnd,autoStart,autoEnd,trigger});
+   }
+ }
+ const operatorBatchCT={},operatorCT={},operatorElapsedBatch={};
+ Object.keys(opTime).forEach(k=>{const L=operatorLoads[k]||{};const work=MANUAL_CATEGORIES.reduce((a,cat)=>a+(L[cat]||0),0)+(L.walking||0);operatorBatchCT[k]=work;operatorCT[k]=work/commonQty;operatorElapsedBatch[k]=opTime[k]});
+ const batchLineCT=Math.max(0,...Object.values(operatorElapsedBatch));
+ // Match the original workbook: operator C/T is work content; hand waiting is shown separately up to Line C/T.
+ Object.keys(operatorLoads).forEach(op=>{const existingProcessWait=operatorLoads[op].waiting||0;const totalHandWait=Math.max(existingProcessWait,batchLineCT-operatorBatchCT[op]);const endIdle=Math.max(0,batchLineCT-opTime[op]);if(endIdle){opSegments[op].push({type:'waiting',start:opTime[op],end:batchLineCT,pid:'',label:'Line balance waiting',pieceCycle:commonQty,occurrence:0})}operatorLoads[op].waiting=totalHandWait;});
+ totalWait=Object.values(operatorLoads).reduce((a,L)=>a+(L.waiting||0),0);
+ const actualLineCT=batchLineCT/commonQty; const takt=calcTaktSec(s); const batchTakt=takt*commonQty; const bottleneck=Object.entries(operatorElapsedBatch).sort((a,b)=>b[1]-a[1])[0]?.[0]||'-';
+ return {commonQty,operatorCT,operatorBatchCT,operatorElapsedBatch,opSegments,operatorLoads,actualLineCT,batchLineCT,takt,batchTakt,bottleneck,totalAuto,totalWalk,totalWait,totalManual,processResults,machineReady,machineSegments};
+}
+function bind(){
+ document.getElementById('languageSelect').onchange=e=>{state.project.language=e.target.value;renderAll()};
+ document.getElementById('scenarioSelect').onchange=e=>{state.project.activeScenarioId=e.target.value;renderAll()};
+ document.getElementById('addRowBtn').onclick=()=>{const s=activeScenario();s.processes.push(defaultProcess(s.processes.length+1));renderAll()};
+ document.getElementById('importExcelBtn').onclick=()=>document.getElementById('excelInput').click();document.getElementById('excelInput').onchange=importExcelWorkData;
+ document.getElementById('saveBtn').onclick=saveProject;document.getElementById('loadBtn').onclick=()=>document.getElementById('loadInput').click();document.getElementById('loadInput').onchange=loadProject;
+ document.getElementById('newProjectBtn').onclick=()=>{if(confirm('Create a new project? Unsaved changes will be lost.')){state.project=newProject();state.project.activeScenarioId=state.project.scenarios[0].id;state.compareSelected=new Set([state.project.activeScenarioId]);renderAll();toast(t('projectReset'))}};
+ document.getElementById('timeUnit').onchange=e=>{convertScenarioUnit(activeScenario(),e.target.value);renderAll()};
+ document.getElementById('taktMode').onchange=e=>{activeScenario().taktMode=e.target.value;renderAll()};
+ document.getElementById('scenarioSettingsBtn').onclick=openSettings;document.getElementById('cancelSettings').onclick=()=>showModal(false);document.getElementById('applySettings').onclick=applySettings;
+ document.getElementById('blankScenarioBtn').onclick=()=>createScenario(false);document.getElementById('duplicateScenarioBtn').onclick=()=>createScenario(true);
+ document.getElementById('zoomOutBtn').onclick=()=>setChartZoom(state.chartZoom/1.2);
+ document.getElementById('zoomResetBtn').onclick=()=>setChartZoom(1);
+ document.getElementById('zoomInBtn').onclick=()=>setChartZoom(state.chartZoom*1.2);
+ document.getElementById('fitChartBtn').onclick=()=>{state.chartFit=!state.chartFit;if(state.chartFit)state.chartZoom=1;applyChartFit();};
+ document.getElementById('fullscreenChartBtn').onclick=toggleChartFullscreen;
+ document.addEventListener('fullscreenchange',()=>{const b=document.getElementById('fullscreenChartBtn');if(b)b.textContent=document.fullscreenElement?t('exitFullscreen'):t('fullscreen');requestAnimationFrame(applyChartFit)});
+ document.getElementById('chartTabs').onclick=e=>{if(e.target.dataset.mode){state.chartMode=e.target.dataset.mode;renderChart()}};
+}
+function renderAll(){renderI18n();renderNav();renderScenarioSelect();renderKpis();renderTable();renderChart();renderScenarioList();renderCompare();renderGuide();const s=activeScenario();document.getElementById('timeUnit').value=s.timeUnit;document.getElementById('taktMode').value=s.taktMode;document.getElementById('languageSelect').value=state.project.language}
+function renderI18n(){document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n))}
+function renderNav(){const nav=document.getElementById('nav');const tabs=[['workPage','work'],['scenariosPage','scenarios'],['comparePage','compare'],['guidePage','guide']];nav.innerHTML=tabs.map((x,i)=>`<button class="${i===0?'active':''}" data-page="${x[0]}">${t(x[1])}</button>`).join('');nav.onclick=e=>{if(!e.target.dataset.page)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(e.target.dataset.page).classList.add('active');nav.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b===e.target));}}
+function renderScenarioSelect(){const el=document.getElementById('scenarioSelect');el.innerHTML=state.project.scenarios.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');el.value=activeScenario().id}
+function renderKpis(){const s=activeScenario(),c=calculateScenario(s);const ops=Object.keys(c.operatorCT).length;const lineDisplay=`${fmtSec(c.batchLineCT,s.timeUnit)} / ${c.commonQty} pcs`;const items=[[t('actualLineCT'),lineDisplay,`(${fmtSec(c.actualLineCT,s.timeUnit)}/pc) · OP ${c.bottleneck}`],[t('targetTakt'),fmtSec(c.takt,s.timeUnit),`${s.taktMode} · Batch ${fmtSec(c.batchTakt,s.timeUnit)}`],[t('bottleneck'),`OP ${c.bottleneck}`,`${fmtSec(c.operatorBatchCT[c.bottleneck]||0,s.timeUnit)} / ${c.commonQty} pcs`],[t('commonQty'),`${c.commonQty} pcs`,s.commonQtyMode==='manual'?t('manualOverride'):'LCM(Set Qty)'],[t('walking'),fmtSec(c.totalWalk,s.timeUnit),'Batch total'],[t('operators'),ops,'Active']];document.getElementById('kpis').innerHTML=items.map(i=>`<div class="kpi"><div class="label">${i[0]}</div><div class="value">${i[1]}</div><div class="sub">${i[2]}</div></div>`).join('')}
+const cols=[['operator','operator','number'],['workSeq','workSeq','number'],['usageSeq','usageSeq','number'],['process','process','text'],['workCategory','category','category'],['machine','machine','text'],['setQty','setQty','number'],['basis','basis','basis'],['manual','manual','number'],['auto','auto','number'],['auto2','auto2','number'],['frequency','frequency','number'],['auto2Mode','auto2Mode','auto2Mode'],['walk1','walk.0','number'],['w1c','walkComment.0','text'],['walk2','walk.1','number'],['w2c','walkComment.1','text'],['walk3','walk.2','number'],['w3c','walkComment.2','text'],['walk4','walk.3','number'],['w4c','walkComment.3','text'],['walk5','walk.4','number'],['w5c','walkComment.4','text'],['ol','ol','bool'],['overlap','overlap','number'],['handling','handling','handling'],['comment','comment','text']];
+function getPath(o,path){return path.split('.').reduce((a,k)=>a?.[k],o)} function setPath(o,path,val){const p=path.split('.');let x=o;for(let i=0;i<p.length-1;i++)x=x[p[i]];x[p.at(-1)]=val}
+function renderTable(){const s=activeScenario(),tbl=document.getElementById('processTable');let h='<thead><tr>'+cols.map(c=>`<th>${t(c[0])}${['manual','auto','auto2','walk1','walk2','walk3','walk4','walk5','overlap'].includes(c[0])?` (${s.timeUnit})`:''}</th>`).join('')+`<th>${t('actions')}</th></tr></thead><tbody>`;h+=s.processes.map(p=>`<tr data-id="${p.id}">${cols.map(c=>`<td>${cellHtml(p,c)}</td>`).join('')}<td><div class="row-actions"><button class="btn small soft" data-act="inspect">i</button><button class="btn small danger" data-act="del">×</button></div></td></tr>`).join('')+'</tbody>';tbl.innerHTML=h;tbl.onchange=tableChange;tbl.onclick=tableClick}
+function cellHtml(p,c){const v=getPath(p,c[1]);const common=`data-path="${c[1]}"`;
+ if(c[2]==='category')return `<select ${common}>${MANUAL_CATEGORIES.map(k=>`<option value="${k}" ${v===k?'selected':''}>${t(k)}</option>`).join('')}</select>`;
+ if(c[2]==='basis')return `<select ${common}><option value="perSet" ${v==='perSet'?'selected':''}>${t('perSet')}</option><option value="perPiece" ${v==='perPiece'?'selected':''}>${t('perPiece')}</option></select>`;
+ if(c[2]==='auto2Mode')return `<select ${common}><option value="replace" ${v==='replace'?'selected':''}>${t('replace')}</option><option value="add" ${v==='add'?'selected':''}>${t('add')}</option></select>`;
+ if(c[2]==='handling')return `<select ${common}><option value="wait" ${v==='wait'?'selected':''}>${t('wait')}</option><option value="skip" ${v==='skip'?'selected':''}>${t('skip')}</option></select>`;
+ if(c[2]==='bool')return `<select ${common}><option value="false" ${!v?'selected':''}>${t('off')}</option><option value="true" ${v?'selected':''}>${t('on')}</option></select>`;
+ return `<input ${common} type="${c[2]}" value="${esc(v??'')}" ${c[2]==='number'?'step="0.01"':''}/>`}
+function tableChange(e){const tr=e.target.closest('tr');if(!tr||!e.target.dataset.path)return;const p=activeScenario().processes.find(x=>x.id===tr.dataset.id);let v=e.target.value;if(e.target.type==='number')v=Number(v)||0;if(e.target.dataset.path==='ol')v=v==='true';setPath(p,e.target.dataset.path,v);renderKpis();renderChart();renderScenarioList();renderCompare()}
+function tableClick(e){const tr=e.target.closest('tr');if(!tr)return;const id=tr.dataset.id;if(e.target.dataset.act==='del'){activeScenario().processes=activeScenario().processes.filter(p=>p.id!==id);if(state.selectedProcessId===id)state.selectedProcessId=null;renderAll()}else if(e.target.dataset.act==='inspect'){state.selectedProcessId=id;renderChart()}else if(!e.target.closest('input,select,button')){state.selectedProcessId=id;renderChart()}}
+function renderLegend(){
+ const el=document.getElementById('legend');
+ if(state.chartMode==='classic'){
+   el.innerHTML=`
+    <span class="leg"><svg width="30" height="12"><line x1="2" y1="6" x2="28" y2="6" stroke="#111827" stroke-width="5.5" stroke-linecap="round"/></svg>${t('manual')}</span>
+    <span class="leg"><svg width="30" height="12"><line x1="2" y1="6" x2="28" y2="6" stroke="#111827" stroke-width="3" stroke-dasharray="8 5"/></svg>${t('auto')}</span>
+    <span class="leg"><svg width="30" height="12"><line x1="2" y1="10" x2="28" y2="2" stroke="#111827" stroke-width="1.8"/></svg>${t('walking')}</span>
+    <span class="leg"><svg width="30" height="12"><line x1="2" y1="4" x2="28" y2="4" stroke="#111827" stroke-width="2.2"/><line x1="2" y1="8" x2="28" y2="8" stroke="#111827" stroke-width="2.2"/></svg>${t('waiting')}</span>
+    <span class="leg"><svg width="30" height="12"><line x1="15" y1="1" x2="15" y2="11" stroke="#e11d48" stroke-width="2" stroke-dasharray="2 3"/></svg>${t('operator')} C/T</span>
+    <span class="leg"><svg width="30" height="12"><line x1="15" y1="1" x2="15" y2="11" stroke="#e11d48" stroke-width="3" stroke-dasharray="2 3"/></svg>Line C/T</span>`;
+   return;
+ }
+ el.innerHTML=[['manual',COLORS.manual],['load',COLORS.load],['unload',COLORS.unload],['inspection',COLORS.inspection],['other',COLORS.other],['walking',COLORS.walking],['waiting',COLORS.waiting],['auto',COLORS.auto],['auto2',COLORS.auto2]].map(x=>`<span class="leg"><span class="swatch" style="background:${x[1]}"></span>${t(x[0])}</span>`).join('')+`<span class="leg"><span class="line-swatch" style="border-color:${COLORS.takt}"></span>${t('targetTakt')}</span>`
+}
+function renderChart(){renderLegend();document.querySelectorAll('#chartTabs button').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.chartMode));if(state.chartMode==='standard')renderStandardChart();else if(state.chartMode==='classic')renderClassicChart();else renderYamazumi();renderCalcCard();renderOperatorLoadSummary();requestAnimationFrame(applyChartFit);const fb=document.getElementById('fullscreenChartBtn');if(fb)fb.textContent=document.fullscreenElement?t('exitFullscreen'):t('fullscreen')}
+function setChartZoom(z){state.chartFit=false;state.chartZoom=Math.max(.35,Math.min(3,Number(z)||1));applyChartFit();}
+function applyChartFit(){const area=document.getElementById('chartArea');const svg=area?.querySelector('svg');const zr=document.getElementById('zoomResetBtn');if(!area||!svg)return;svg.style.transform='';svg.style.marginBottom='';svg.style.marginRight='';area.classList.toggle('fit-mode',!!state.chartFit);const vb=svg.viewBox?.baseVal;const naturalW=(vb&&vb.width)||Number(svg.getAttribute('width'))||svg.getBBox().width||1;const naturalH=(vb&&vb.height)||Number(svg.getAttribute('height'))||svg.getBBox().height||1;let scale=state.chartZoom||1;if(state.chartFit){const availW=Math.max(120,area.clientWidth-8);const availH=Math.max(120,area.clientHeight-8);scale=Math.min(availW/naturalW,availH/naturalH,1);}svg.style.transform=`scale(${scale})`;svg.style.marginRight=`${naturalW*(scale-1)}px`;svg.style.marginBottom=`${naturalH*(scale-1)}px`;if(zr)zr.textContent=state.chartFit?'Fit':`${Math.round(scale*100)}%`;area.scrollTo({left:0,top:0});}
+async function toggleChartFullscreen(){const panel=document.getElementById('chartPanel');try{if(!document.fullscreenElement){if(panel.requestFullscreen)await panel.requestFullscreen();}else if(document.exitFullscreen)await document.exitFullscreen();}catch(e){console.warn('Fullscreen unavailable',e)}}
+function renderStandardChart(){
+  const s=activeScenario();
+  const c=calculateScenario(s);
+  const area=document.getElementById('chartArea');
+  const max=Math.max(c.batchLineCT,c.batchTakt,60);
+  const px=Math.max(5,900/max);
+  const width=Math.max(900,max*px+180);
+  const ops=Object.keys(c.operatorCT).sort((a,b)=>Number(a)-Number(b));
+  const opHeaderH=50, machineRowH=32, groupGap=14, topY=48;
+  const groupedMachines={};
+  ops.forEach(op=>{groupedMachines[op]=[...new Set(Object.keys(c.machineSegments[op]||{}))].sort((a,b)=>String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'}));});
+  let cursorY=topY;const layout={};
+  ops.forEach(op=>{layout[op]={operatorY:cursorY,machineYs:{}};cursorY+=opHeaderH;groupedMachines[op].forEach(machine=>{layout[op].machineYs[machine]=cursorY;cursorY+=machineRowH});cursorY+=groupGap;});
+  const height=Math.max(160,cursorY+24);let svg=`<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
+  // 1) Group backgrounds first.
+  ops.forEach((op,idx)=>{const y=layout[op].operatorY,machines=groupedMachines[op],groupBottom=(machines.length?layout[op].machineYs[machines[machines.length-1]]+machineRowH:y+opHeaderH-6),groupH=groupBottom-y;if(idx%2===0)svg+=`<rect x="0" y="${y-5}" width="${width}" height="${groupH+5}" fill="#fbfcfe"/>`;});
+  // 2) Full-height grid on top of backgrounds so Operator 1 never hides it.
+  const step=Math.max(5,Math.round(max/12/5)*5);
+  for(let tsec=0;tsec<=max;tsec+=step){const x=120+tsec*px;svg+=`<line x1="${x}" y1="30" x2="${x}" y2="${height-20}" stroke="#e8edf3" vector-effect="non-scaling-stroke"/><text x="${x+2}" y="18" font-size="10" fill="#667085">${Number(fromSec(tsec,s.timeUnit).toFixed(1))}</text>`;}
+  // 3) Operator and machine content.
+  ops.forEach((op)=>{const y=layout[op].operatorY,machines=groupedMachines[op],groupBottom=(machines.length?layout[op].machineYs[machines[machines.length-1]]+machineRowH:y+opHeaderH-6);svg+=`<text x="12" y="${y+17}" font-size="12" font-weight="700" fill="#334155">Operator ${op}</text><line x1="120" y1="${y+27}" x2="${width-20}" y2="${y+27}" stroke="#d9e1ea"/>`;
+    for(const seg of c.opSegments[op]){const x=120+seg.start*px,w=Math.max(2,(seg.end-seg.start)*px),col=COLORS[seg.type]||COLORS.other;svg+=`<rect data-pid="${seg.pid}" x="${x}" y="${y}" width="${w}" height="20" rx="4" fill="${col}" opacity=".9"><title>${esc(seg.label)} | ${seg.type} | ${fmtSec(seg.end-seg.start,s.timeUnit)}</title></rect>`;}
+    machines.forEach(machine=>{const my=layout[op].machineYs[machine];svg+=`<text x="28" y="${my+14}" font-size="10.5" font-weight="700" fill="#475569">↳ ${t('machine')} ${esc(machine)}</text><line x1="120" y1="${my+19}" x2="${width-20}" y2="${my+19}" stroke="#e2e8f0"/>`;(c.machineSegments[op]?.[machine]||[]).forEach(seg=>{const x=120+seg.start*px,w=Math.max(2,(seg.end-seg.start)*px);svg+=`<rect data-pid="${seg.pid}" x="${x}" y="${my}" width="${w}" height="14" rx="3" fill="${seg.trigger?COLORS.auto2:COLORS.auto}" opacity=".86"><title>Operator ${esc(op)} | ${esc(machine)} | ${esc(seg.label)} | Auto ${fmtSec(seg.end-seg.start,s.timeUnit)} | Cycle ${seg.pieceCycle}</title></rect>`;});});
+    const sepY=groupBottom+groupGap/2;svg+=`<line x1="12" y1="${sepY}" x2="${width-20}" y2="${sepY}" stroke="#cbd5e1" stroke-dasharray="3 4"/>`;
+  });
+  const tx=120+c.batchTakt*px;svg+=`<line x1="${tx}" y1="25" x2="${tx}" y2="${height-20}" stroke="${COLORS.takt}" stroke-width="2.5" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/><rect x="${tx+3}" y="24" width="58" height="14" rx="3" fill="#ffffff" opacity=".9"/><text x="${tx+6}" y="34" font-size="10" font-weight="700" fill="${COLORS.takt}">Batch Takt</text>`;
+  svg+='</svg>';area.innerHTML=svg;area.querySelectorAll('[data-pid]').forEach(el=>el.addEventListener('click',()=>{state.selectedProcessId=el.dataset.pid;renderCalcCard()}));
+}
+function renderClassicChart(){
+ const s=activeScenario(),c=calculateScenario(s),area=document.getElementById('chartArea');
+ const ops=Object.keys(c.operatorBatchCT).sort((a,b)=>Number(a)-Number(b));
+ const max=Math.max(c.batchLineCT,c.batchTakt,1)*1.08;
+ const px=Math.max(6,930/max), left=235, right=45, top=48;
+ const rowH=42, groupGap=30, headerH=34;
+ const rowsByOp={};
+ ops.forEach(op=>{
+   rowsByOp[op]=[...s.processes]
+     .filter(p=>String(p.operator||1)===String(op))
+     .sort((a,b)=>(Number(a.workSeq)-Number(b.workSeq))||(Number(a.usageSeq)-Number(b.usageSeq)));
+ });
+ let cursor=top,layout={};
+ ops.forEach(op=>{
+   layout[op]={top:cursor,rows:{}};
+   cursor+=headerH;
+   rowsByOp[op].forEach(p=>{layout[op].rows[p.id]=cursor+rowH/2;cursor+=rowH});
+   cursor+=groupGap;
+ });
+ const H=Math.max(260,cursor+20),W=Math.max(1050,left+max*px+right);
+ let svg=`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
+ // Draw alternating operator backgrounds first, then the time grid on top so Operator 1 never hides grid lines.
+ const desiredTicks=14; const raw=max/desiredTicks; const pow=Math.pow(10,Math.floor(Math.log10(Math.max(raw,1e-9)))); const nice=[1,2,5,10].map(n=>n*pow).find(n=>n>=raw)||10*pow;
+ ops.forEach((op,oi)=>{const group=layout[op],rows=rowsByOp[op];const bottom=(rows.length?group.rows[rows[rows.length-1].id]+rowH/2:group.top+headerH);if(oi%2===0)svg+=`<rect x="0" y="${group.top-8}" width="${W}" height="${bottom-group.top+16}" fill="#fbfcfe"/>`;});
+ for(let tt=0;tt<=max+1e-6;tt+=nice){const x=left+tt*px;svg+=`<line x1="${x}" y1="28" x2="${x}" y2="${H-15}" stroke="#e5e7eb" stroke-width="1"/><text x="${x+3}" y="18" font-size="10" fill="#6b7280">${Number(fromSec(tt,s.timeUnit).toFixed(2))}</text>`}
+ ops.forEach((op,oi)=>{
+   const group=layout[op],rows=rowsByOp[op];
+   const bottom=(rows.length?group.rows[rows[rows.length-1].id]+rowH/2:group.top+headerH);
+   svg+=`<text x="12" y="${group.top+15}" font-size="13" font-weight="800" fill="#1f2937">Operator ${op}</text>`;
+   svg+=`<text x="82" y="${group.top+15}" font-size="10.5" fill="#64748b">${fmtSec(c.operatorBatchCT[op]||0,s.timeUnit)} / ${c.commonQty} pcs (${fmtSec(c.operatorCT[op]||0,s.timeUnit)}/pc)</text>`;
+   rows.forEach((p,i)=>{const y=group.rows[p.id];svg+=`<line x1="${left}" y1="${y}" x2="${W-right}" y2="${y}" stroke="#eef2f6"/>`;
+     const label=esc(p.process||''); const mach=esc(p.machine||'');
+     svg+=`<text x="22" y="${y-4}" font-size="10.5" font-weight="700" fill="#374151">${label}</text><text x="22" y="${y+11}" font-size="9.5" fill="#6b7280">${mach?`${t('machine')} ${mach}`:''}</text>`;
+   });
+   // Manual work: thick solid line on the corresponding process row.
+   (c.opSegments[op]||[]).forEach(seg=>{
+     if(!seg.pid||seg.type==='walking'||seg.type==='waiting')return;
+     const y=group.rows[seg.pid]; if(y==null)return; const x1=left+seg.start*px,x2=left+seg.end*px;
+     svg+=`<line data-pid="${seg.pid}" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#111827" stroke-width="5.5" stroke-linecap="round" vector-effect="non-scaling-stroke"><title>${esc(seg.label)} | ${t('manual')} | ${fmtSec(seg.end-seg.start,s.timeUnit)} | Cycle ${seg.pieceCycle}</title></line>`;
+   });
+   // Automatic B: dashed horizontal line, starting when manual finishes, on that process/machine row.
+   Object.values(c.machineSegments[op]||{}).flat().forEach(seg=>{
+     const y=group.rows[seg.pid];if(y==null)return;const x1=left+seg.start*px,x2=left+seg.end*px;
+     svg+=`<line data-pid="${seg.pid}" x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#111827" stroke-width="3" stroke-dasharray="9 5" stroke-linecap="round" vector-effect="non-scaling-stroke"><title>${esc(seg.label)} | ${t('auto')} | ${fmtSec(seg.end-seg.start,s.timeUnit)} | Cycle ${seg.pieceCycle}</title></line>`;
+   });
+   // Walking: a thin diagonal from the current process row to the next manual process row.
+   const segs=c.opSegments[op]||[];
+   for(let i=0;i<segs.length;i++){
+     const seg=segs[i]; if(seg.type!=='walking'||!seg.pid)continue;
+     const y1=group.rows[seg.pid]; if(y1==null)continue;
+     let next=null; for(let j=i+1;j<segs.length;j++){if(segs[j].pid&&segs[j].type!=='walking'&&segs[j].type!=='waiting'){next=segs[j];break}}
+     const y2=next&&group.rows[next.pid]!=null?group.rows[next.pid]:y1;
+     const x1=left+seg.start*px,x2=left+seg.end*px;
+     svg+=`<line data-pid="${seg.pid}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#111827" stroke-width="1.8" vector-effect="non-scaling-stroke"><title>${esc(seg.label)} | ${t('walking')} | ${fmtSec(seg.end-seg.start,s.timeUnit)}</title></line>`;
+   }
+   // Hand waiting: double horizontal line at the row where waiting occurs.
+   for(let i=0;i<segs.length;i++){
+     const seg=segs[i]; if(seg.type!=='waiting')continue;
+     let pid=seg.pid;
+     if(!pid){for(let j=i-1;j>=0;j--){if(segs[j].pid&&segs[j].type!=='walking'&&segs[j].type!=='waiting'){pid=segs[j].pid;break}}}
+     if(!pid){for(let j=i+1;j<segs.length;j++){if(segs[j].pid&&segs[j].type!=='walking'&&segs[j].type!=='waiting'){pid=segs[j].pid;break}}}
+     const y=group.rows[pid]; if(y==null)continue;const x1=left+seg.start*px,x2=left+seg.end*px;
+     svg+=`<line x1="${x1}" y1="${y-2.3}" x2="${x2}" y2="${y-2.3}" stroke="#111827" stroke-width="2.2" vector-effect="non-scaling-stroke"/><line data-pid="${seg.pid||''}" x1="${x1}" y1="${y+2.3}" x2="${x2}" y2="${y+2.3}" stroke="#111827" stroke-width="2.2" vector-effect="non-scaling-stroke"><title>${t('waiting')} | ${fmtSec(seg.end-seg.start,s.timeUnit)}</title></line>`;
+   }
+   // Operator C/T: red dotted line for this operator group, as in the workbook legend.
+   const opx=left+(c.operatorBatchCT[op]||0)*px;
+   svg+=`<line x1="${opx}" y1="${group.top+headerH-5}" x2="${opx}" y2="${bottom+4}" stroke="#ef4444" stroke-width="2" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/><text x="${opx+4}" y="${group.top+headerH+6}" font-size="9" fill="#dc2626">OP C/T</text>`;
+   svg+=`<line x1="10" y1="${bottom+groupGap/2}" x2="${W-right}" y2="${bottom+groupGap/2}" stroke="#d1d5db" stroke-dasharray="3 5"/>`;
+ });
+ // Line C/T: thicker red dotted line across the entire chart.
+ const lx=left+c.batchLineCT*px;svg+=`<line x1="${lx}" y1="26" x2="${lx}" y2="${H-16}" stroke="#ef4444" stroke-width="3" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"/><text x="${lx+5}" y="35" font-size="10" font-weight="800" fill="#dc2626">Line C/T ${fmtSec(c.batchLineCT,s.timeUnit)} / ${c.commonQty} pcs</text>`;
+ // Target/Takt is intentionally separate from the original workbook line styles.
+ if(c.batchTakt>0){const tx=left+c.batchTakt*px;svg+=`<line x1="${tx}" y1="26" x2="${tx}" y2="${H-16}" stroke="${COLORS.takt}" stroke-width="1.8" stroke-dasharray="7 5" opacity=".75" vector-effect="non-scaling-stroke"/><text x="${tx+4}" y="47" font-size="9" fill="${COLORS.takt}">Target ${fmtSec(c.batchTakt,s.timeUnit)}</text>`}
+ svg+='</svg>';area.innerHTML=svg;
+ area.querySelectorAll('[data-pid]').forEach(el=>el.addEventListener('click',()=>{if(el.dataset.pid){state.selectedProcessId=el.dataset.pid;renderCalcCard()}}));
+}
+function renderYamazumi(){
+ const s=activeScenario(),c=calculateScenario(s),area=document.getElementById('chartArea');
+ const ops=Object.keys(c.operatorCT).sort((a,b)=>Number(a)-Number(b));
+ const max=Math.max(c.takt,c.actualLineCT,1)*1.2,H=500,W=Math.max(800,ops.length*140+150),base=450,top=50,left=78,right=24,scale=(base-top)/max;
+ let svg=`<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">`;
+ // Time-axis scale and horizontal grid.
+ const ticks=5;
+ for(let i=0;i<=ticks;i++){const v=max*i/ticks,y=base-v*scale;svg+=`<line x1="${left}" y1="${y}" x2="${W-right}" y2="${y}" stroke="${i===0?'#cbd5e1':'#e9eef5'}" stroke-width="${i===0?1.4:1}" vector-effect="non-scaling-stroke"/><text x="${left-8}" y="${y+4}" text-anchor="end" font-size="10" fill="#667085">${Number(fromSec(v,s.timeUnit).toFixed(2))}</text>`;}
+ svg+=`<line x1="${left}" y1="${top}" x2="${left}" y2="${base}" stroke="#94a3b8" stroke-width="1.2"/><text x="16" y="${top-14}" font-size="10" fill="#667085">Time (${s.timeUnit})</text>`;
+ const ty=base-c.takt*scale;svg+=`<line x1="${left}" y1="${ty}" x2="${W-right}" y2="${ty}" stroke="${COLORS.takt}" stroke-width="2" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/><text x="${left+4}" y="${ty-5}" font-size="11">Takt ${fmtSec(c.takt,s.timeUnit)}</text>`;
+ ops.forEach((op,i)=>{const x=110+i*140,w=70;let y=base;const totals=c.operatorLoads[op]||{};['manual','load','unload','inspection','other','walking','waiting'].forEach(type=>{const h=((totals[type]||0)/c.commonQty)*scale;if(!h)return;y-=h;const col=COLORS[type]||COLORS.other;svg+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${col}"><title>Operator ${op} ${t(type)}: ${fmtSec(totals[type]||0,s.timeUnit)}</title></rect>`});svg+=`<text x="${x+w/2}" y="${base+20}" text-anchor="middle" font-size="12" font-weight="700">OP ${op}</text><text x="${x+w/2}" y="${y-6}" text-anchor="middle" font-size="10">${fmtSec(c.operatorCT[op],s.timeUnit)}</text>`});
+ svg+='</svg>';area.innerHTML=svg;
+}
+function renderOperatorLoadSummary(){
+ const el=document.getElementById('operatorLoadSummary'); if(!el)return;
+ const s=activeScenario(),c=calculateScenario(s); const ops=Object.keys(c.operatorCT).sort((a,b)=>Number(a)-Number(b));
+ const types=['manual','load','unload','inspection','other','walking','waiting'];
+ let h=`<div class="panel-h" style="padding-left:0;padding-right:0"><h3>${t('operatorLoadSummary')}</h3></div><div class="load-summary-grid">`;
+ h+=ops.map(op=>{const L=c.operatorLoads[op]||{};const ct=c.operatorCT[op]||0;const perPiece=Object.fromEntries(types.map(type=>[type,(L[type]||0)/c.commonQty]));const productive=MANUAL_CATEGORIES.reduce((a,k)=>a+(perPiece[k]||0),0)+(perPiece.walking||0);const loadPct=c.takt?productive/c.takt*100:0;const totalLinePc=c.actualLineCT||ct;const stack=types.map(type=>{const v=perPiece[type]||0;const pct=totalLinePc?v/totalLinePc*100:0;return pct?`<span title="${t(type)}: ${fmtSec(v,s.timeUnit)}/pc (${pct.toFixed(1)}%)" style="width:${pct}%;background:${COLORS[type]||COLORS.other}"></span>`:''}).join('');const details=types.map(type=>`<div><span><span class="swatch" style="display:inline-block;margin-right:5px;background:${COLORS[type]||COLORS.other}"></span>${t(type)}</span><b>${fmtSec(perPiece[type]||0,s.timeUnit)}/pc</b></div>`).join('');return `<div class="load-card"><div class="load-head"><b>Operator ${op}</b><span>${t('workload')}: <b>${loadPct.toFixed(1)}%</b> · ${t('batchCT')} ${fmtSec(c.operatorBatchCT[op],s.timeUnit)} / ${c.commonQty} pcs · ${t('perPieceCT')} ${fmtSec(ct,s.timeUnit)}</span></div><div class="stackbar">${stack}</div><div class="load-legend">${details}</div></div>`}).join('');
+ h+='</div>'; el.innerHTML=h;
+}
+
+function renderCalcCard(){const el=document.getElementById('calcCard'),s=activeScenario(),c=calculateScenario(s),p=s.processes.find(x=>x.id===state.selectedProcessId);const head=(title)=>`<div class="calc-head"><h4>${title}</h4><button class="collapse-btn" id="calcCollapseBtn" title="Collapse / Expand">${state.calcCollapsed?'▾':'▴'}</button></div>`;if(!p){el.classList.toggle('collapsed',state.calcCollapsed);el.innerHTML=`${head(t('calcTitle'))}<div class="calc-body"><div style="font-size:10px;color:#667085">${t('noSelection')}</div></div>`;}else{const r=c.processResults[p.id];el.classList.toggle('collapsed',state.calcCollapsed);el.innerHTML=`${head(`${t('calcTitle')} — ${esc(p.process)}`)}<div class="calc-body"><div class="calcline"><span>${t('workCategory')}</span><b>${t(p.category||'manual')}</b></div><div class="calcline"><span>${t('manual')}</span><b>${fmtSec(r.manual,s.timeUnit)}</b></div><div class="calcline"><span>Executions / Batch</span><b>${r.executions} × / ${c.commonQty} pcs</b></div><div class="calcline"><span>${t('auto')}</span><b>${fmtSec(r.autoActual,s.timeUnit)} ${r.triggers?'(Auto 2 × '+r.triggers+')':''}</b></div><div class="calcline"><span>${t('walking')}</span><b>${fmtSec(r.walk,s.timeUnit)}</b></div><div class="calcline"><span>${t('waiting')}</span><b>${fmtSec(r.wait,s.timeUnit)}</b></div><div class="calcline"><span>OL / ${t('overlap')}</span><b>${p.ol?t('on'):t('off')} / ${p.overlap||0} ${s.timeUnit}</b></div><div class="calcline"><span>${t('handling')}</span><b>${p.handling==='wait'?t('wait'):t('skip')}</b></div><div class="calcline"><span>${t('basis')}</span><b>${p.basis==='perPiece'?t('perPiece'):t('perSet')}</b></div></div>`;}const b=document.getElementById('calcCollapseBtn');if(b)b.onclick=()=>{state.calcCollapsed=!state.calcCollapsed;renderCalcCard()}}
+function renderScenarioList(){const el=document.getElementById('scenarioList');el.innerHTML=state.project.scenarios.map(s=>{const c=calculateScenario(s);return `<div class="scenario-card ${s.id===activeScenario().id?'active':''}"><h4>${esc(s.name)}</h4><div class="meta">${t('actualLineCT')}: ${fmtSec(c.batchLineCT,s.timeUnit)} / ${c.commonQty} pcs (${fmtSec(c.actualLineCT,s.timeUnit)}/pc) · ${t('targetTakt')}: ${fmtSec(c.takt,s.timeUnit)}</div><div class="scenario-actions"><button class="btn small soft" data-id="${s.id}" data-a="open">${t('open')}</button><button class="btn small" data-id="${s.id}" data-a="dup">${t('duplicate')}</button><button class="btn small danger" data-id="${s.id}" data-a="del">${t('delete')}</button></div></div>`}).join('');el.onclick=e=>{const id=e.target.dataset.id,a=e.target.dataset.a;if(!id)return;if(a==='open'){state.project.activeScenarioId=id;renderAll()}if(a==='dup'){state.project.activeScenarioId=id;createScenario(true)}if(a==='del')deleteScenario(id)}}
+function createScenario(dup){const base=activeScenario();let s=dup?structuredClone(base):defaultScenario('New Scenario');s.id=uid();s.name=dup?`${base.name} Copy`:`Scenario ${state.project.scenarios.length+1}`;if(!dup)s.processes=[];state.project.scenarios.push(s);state.project.activeScenarioId=s.id;state.compareSelected.add(s.id);renderAll()}
+function deleteScenario(id){if(state.project.scenarios.length===1){toast(t('cannotDeleteLast'));return}state.project.scenarios=state.project.scenarios.filter(s=>s.id!==id);state.compareSelected.delete(id);if(state.project.activeScenarioId===id)state.project.activeScenarioId=state.project.scenarios[0].id;renderAll();toast(t('scenarioDeleted'))}
+function renderCompare(){const checks=document.getElementById('compareChecks'),grid=document.getElementById('compareGrid');checks.innerHTML=state.project.scenarios.map(s=>`<label style="font-size:12px"><input type="checkbox" data-id="${s.id}" ${state.compareSelected.has(s.id)?'checked':''}/> ${esc(s.name)}</label>`).join('');checks.onchange=e=>{const id=e.target.dataset.id;if(!id)return;e.target.checked?state.compareSelected.add(id):state.compareSelected.delete(id);renderCompare()};const selected=state.project.scenarios.filter(s=>state.compareSelected.has(s.id));grid.innerHTML=selected.map(s=>{const c=calculateScenario(s),workload=c.takt?c.actualLineCT/c.takt*100:0;return `<div class="compare-card"><h4>${esc(s.name)}</h4><div class="metric"><span>${t('actualLineCT')}</span><b>${fmtSec(c.batchLineCT,s.timeUnit)} / ${c.commonQty} pcs (${fmtSec(c.actualLineCT,s.timeUnit)}/pc)</b></div><div class="metric"><span>${t('targetTakt')}</span><b>${fmtSec(c.takt,s.timeUnit)}</b></div><div class="metric"><span>${t('bottleneck')}</span><b>OP ${c.bottleneck}</b></div><div class="metric"><span>${t('waiting')}</span><b>${fmtSec(c.totalWait,s.timeUnit)}</b></div><div class="metric"><span>${t('walking')}</span><b>${fmtSec(c.totalWalk,s.timeUnit)}</b></div><div class="metric"><span>${t('workload')}</span><b>${workload.toFixed(1)}%</b></div><div class="barline"><span style="width:${Math.min(100,workload)}%"></span></div></div>`}).join('')||`<div style="color:#667085;font-size:13px">${t('compareHint')}</div>`}
+function renderGuide(){const lang=state.project.language;const sections=lang==='th'?[['start','เริ่มต้นใช้งาน'],['fields','ความหมายของข้อมูลที่กรอก'],['category','Work Category และสี'],['logic','Logic การคำนวณ'],['auto2','Auto 2 + Frequency'],['walking','Walking 1–5'],['ol','OL / Overlap'],['scenario','Scenario และ Compare'],['save','Save / Load Project']]:[['start','Getting Started'],['fields','Input Field Reference'],['category','Work Category & Colors'],['logic','Calculation Logic'],['auto2','Auto 2 + Frequency'],['walking','Walking 1–5'],['ol','OL / Overlap'],['scenario','Scenario & Compare'],['save','Save / Load Project']];const nav=document.getElementById('guideNav');nav.innerHTML=sections.map(s=>`<button data-guide="${s[0]}">${s[1]}</button>`).join('');nav.onclick=e=>{if(e.target.dataset.guide)showGuide(e.target.dataset.guide)};showGuide(window.__guideKey||'start')}
+function showGuide(key){window.__guideKey=key;const th=state.project.language==='th';const el=document.getElementById('guideContent');const map={
+fields:th?`<h2>ความหมายของข้อมูลที่กรอก</h2>
+<table><thead><tr><th>ค่า</th><th>ความหมาย / วิธีใช้</th></tr></thead><tbody>
+<tr><td><b>Takt Calculation Mode</b></td><td><b>Manual</b> = กรอก Takt เอง, <b>Auto</b> = โปรแกรมคำนวณจาก Available Production Time ÷ Required Quantity</td></tr>
+<tr><td><b>Manual Takt</b></td><td>ค่า Takt/Target ที่ผู้ใช้กำหนดเอง เช่น 60 sec/pc ใช้เมื่อ Takt Mode = Manual</td></tr>
+<tr><td><b>Available Production Time</b></td><td>เวลาผลิตสุทธิที่ใช้ได้จริง หลังหักเวลาพักและ Planned Stop แล้ว เช่น 480 min − พัก 60 min = 420 min</td></tr>
+<tr><td><b>Required Quantity</b></td><td>จำนวนชิ้นที่ต้องผลิตในช่วง Available Production Time เช่น 420 pcs</td></tr>
+<tr><td><b>Takt Time</b></td><td>จังหวะการผลิตที่ต้องทำให้ทัน Demand. ตัวอย่าง 420 min ÷ 420 pcs = 1 min/pc = 60 sec/pc</td></tr>
+<tr><td><b>Operator</b></td><td>หมายเลขผู้ปฏิบัติงานที่รับผิดชอบ Process นั้น</td></tr>
+<tr><td><b>Work Sequence</b></td><td>ลำดับการทำงานของ Operator คนนั้น เรียงจาก 1 เป็นต้นไป</td></tr>
+<tr><td><b>Usage Sequence</b></td><td>ลำดับการใช้เครื่อง 1–5 สำหรับกรณีใช้หลายเครื่อง/Parallel Machine ใน Work Sequence เดียวกัน</td></tr>
+<tr><td><b>Process Name</b></td><td>ชื่อขั้นตอนงาน เช่น Loading, Tightening, Inspection</td></tr>
+<tr><td><b>Machine No.</b></td><td>ชื่อหรือหมายเลขเครื่องจักรที่ Process นั้นใช้งาน</td></tr>
+<tr><td><b>Set Qty</b></td><td>จำนวนชิ้นต่อ Set ที่ Process ทำในหนึ่งครั้ง ระบบใช้ค่านี้สร้าง Common Production Qty และจำนวนครั้งที่ Process ต้องทำในหนึ่ง Batch</td></tr><tr><td><b>Common Qty Mode</b></td><td><b>Auto</b> ใช้ LCM ของ Set Qty ทั้ง Scenario; <b>Manual Override</b> ใช้เมื่อต้องการทดลองเพียงบางส่วนของไลน์ แต่ต้องการคงฐาน Batch เช่น 2 pcs ตามต้นแบบ</td></tr>
+<tr><td><b>Basis</b></td><td><b>Per Piece</b> = เวลาคูณ Set Qty, <b>Per Set</b> = เวลาที่กรอกเป็นเวลารวมของทั้ง Set</td></tr>
+<tr><td><b>Work Category</b></td><td>ประเภทงาน Manual, Load, Unload, Inspection หรือ Other ใช้ทั้งในการกำหนดสีและ Operator Load Summary</td></tr>
+<tr><td><b>Manual Time</b></td><td>เวลาที่ Operator ลงมือทำงานจริงใน Process นั้น</td></tr>
+<tr><td><b>Auto Time</b></td><td>เวลาเครื่องจักรทำงานอัตโนมัติ โดย Operator สามารถไปทำงานอื่นได้ถ้าเงื่อนไขอนุญาต</td></tr>
+<tr><td><b>Auto 2</b></td><td>เวลา Auto ทางเลือกที่เกิดตาม Frequency และใช้แบบ Replace หรือ Add</td></tr>
+<tr><td><b>Frequency</b></td><td>ความถี่ที่ Auto 2 เกิด เช่น 5 = ทุก 5 cycle</td></tr>
+<tr><td><b>Walking 1–5</b></td><td>เวลาเดินไปยัง Usage Sequence/เส้นทางถัดไป ช่องว่างถือเป็น 0</td></tr>
+<tr><td><b>Walking Comment 1–5</b></td><td>คำอธิบายว่า Walking นั้นทำอะไรหรือเดินจากไหนไปไหน</td></tr>
+<tr><td><b>OL</b></td><td>เปิด/ปิดการอนุญาตให้ Manual overlap กับ Auto ตามเงื่อนไขของ Process</td></tr>
+<tr><td><b>Overlap Time</b></td><td>เวลาสูงสุดที่ Manual สามารถเริ่มก่อน Auto จบได้ เมื่อ OL เปิด</td></tr>
+<tr><td><b>Auto Handling</b></td><td><b>Wait</b> = รอถ้า Auto ยังไม่จบ, <b>Skip / Continue</b> = ไปทำงานอื่นก่อนแล้วกลับมา</td></tr>
+<tr><td><b>Comment</b></td><td>หมายเหตุทั่วไปของ Process</td></tr>
+</tbody></table>
+<div class="formula"><b>ตัวอย่าง Takt Auto:</b> Available Production Time 420 min ÷ Required Quantity 500 pcs = 0.84 min/pc = 50.4 sec/pc</div>`:`<h2>Input Field Reference</h2>
+<table><thead><tr><th>Field</th><th>Meaning / Usage</th></tr></thead><tbody>
+<tr><td><b>Takt Calculation Mode</b></td><td><b>Manual</b> = enter takt directly. <b>Auto</b> = calculate from Available Production Time ÷ Required Quantity.</td></tr>
+<tr><td><b>Manual Takt</b></td><td>User-defined takt/target such as 60 sec/pc. Used when Takt Mode is Manual.</td></tr>
+<tr><td><b>Available Production Time</b></td><td>Net time available for production after breaks and planned stops. Example: 480 min − 60 min breaks = 420 min.</td></tr>
+<tr><td><b>Required Quantity</b></td><td>Demand to be produced during the available production time.</td></tr>
+<tr><td><b>Takt Time</b></td><td>Required production pace to meet demand. Example: 420 min ÷ 420 pcs = 1 min/pc = 60 sec/pc.</td></tr>
+<tr><td><b>Operator</b></td><td>Operator number responsible for the process.</td></tr>
+<tr><td><b>Work Sequence</b></td><td>Execution order for each operator, starting from 1.</td></tr>
+<tr><td><b>Usage Sequence</b></td><td>Machine-use order 1–5 for parallel-machine work within the same work sequence.</td></tr>
+<tr><td><b>Process Name</b></td><td>Name of the work step, e.g. Loading, Tightening, Inspection.</td></tr>
+<tr><td><b>Machine No.</b></td><td>Machine name or identifier used by the process.</td></tr>
+<tr><td><b>Set Qty</b></td><td>Number of pieces handled in one process execution. It is used to determine common production quantity and execution count per batch.</td></tr><tr><td><b>Common Qty Mode</b></td><td><b>Auto</b> uses the LCM of all Set Qty values; <b>Manual Override</b> is useful when studying only part of a line while preserving a batch basis such as 2 pcs.</td></tr>
+<tr><td><b>Basis</b></td><td><b>Per Piece</b> multiplies time by Set Qty. <b>Per Set</b> treats the entered time as the total for the whole set.</td></tr>
+<tr><td><b>Work Category</b></td><td>Manual, Load, Unload, Inspection, or Other. Used for chart colors and Operator Load Summary.</td></tr>
+<tr><td><b>Manual Time</b></td><td>Hands-on operator time for the process.</td></tr>
+<tr><td><b>Auto Time</b></td><td>Automatic machine-running time. The operator may move to other work when logic allows.</td></tr>
+<tr><td><b>Auto 2</b></td><td>Alternate automatic time triggered by Frequency and applied as Replace or Add.</td></tr>
+<tr><td><b>Frequency</b></td><td>How often Auto 2 occurs; e.g. 5 means every fifth cycle.</td></tr>
+<tr><td><b>Walking 1–5</b></td><td>Walking time to the next usage sequence/route. Blank is treated as zero.</td></tr>
+<tr><td><b>Walking Comment 1–5</b></td><td>Description of what happens during that walking segment or where the operator walks.</td></tr>
+<tr><td><b>OL</b></td><td>Enables or disables manual/automatic overlap according to process logic.</td></tr>
+<tr><td><b>Overlap Time</b></td><td>Maximum amount of time manual work may start before automatic completion when OL is enabled.</td></tr>
+<tr><td><b>Auto Handling</b></td><td><b>Wait</b> means the operator waits if Auto is not finished; <b>Skip / Continue</b> means the operator may perform other work first.</td></tr>
+<tr><td><b>Comment</b></td><td>General note for the process.</td></tr>
+</tbody></table>
+<div class="formula"><b>Auto Takt example:</b> 420 min available ÷ 500 pcs required = 0.84 min/pc = 50.4 sec/pc.</div>`,
+category:th?`<h2>Work Category และระบบสี</h2><p>กำหนดประเภทงานให้แต่ละ Process: Manual, Load, Unload, Inspection หรือ Other. สีของกราฟยึดตามประเภทงานเพื่อให้ทุก Operator อ่านความหมายของสีเหมือนกัน ส่วน Walking, Waiting และ Machine Auto ใช้กลุ่มสีเฉพาะของตัวเอง</p><p>Operator Load Summary จะแยกเวลาแต่ละประเภท พร้อม Stacked Bar เพื่อดูสัดส่วน Manual/Load/Unload/Inspection/Walking/Waiting/Other ของ Operator แต่ละคน</p>`:`<h2>Work Category & Color System</h2><p>Assign each process to Manual, Load, Unload, Inspection, or Other. Chart colors are based on activity type so the same color means the same thing across all operators. Walking, Waiting and Machine Auto use their own color families.</p><p>Operator Load Summary breaks down each category and shows a stacked bar for Manual/Load/Unload/Inspection/Walking/Waiting/Other per operator.</p>`,
+start:th?`<h2>เริ่มต้นใช้งาน</h2><p>1 Project สามารถมีหลาย Scenario ได้ ใช้ตาราง Work Data สำหรับกรอกข้อมูล และดูกราฟ Standard Work Combination, กราฟเส้นต่อเนื่อง หรือ Yamazumi ทางด้านขวา</p><p>หน่วยเวลาเลือกได้ทั้ง <b>sec</b> และ <b>min</b> ตั้งแต่ต้น และสามารถเปลี่ยนภายหลังได้โดยระบบแปลงค่าที่เกี่ยวข้องให้อัตโนมัติ</p><p><b>Import Excel</b> ใช้นำเข้าข้อมูล Work Data จากไฟล์ Excel โดยรองรับไฟล์ .xlsx รูปแบบต้นแบบญี่ปุ่นและหัวคอลัมน์ทั่วไปบางรูปแบบ</p>`:`<h2>Getting Started</h2><p>One project can contain multiple scenarios. Enter work data in the table and analyze it using the Standard Work Combination, Classic Connected Lines, or Yamazumi view.</p><p>Time input supports both <b>sec</b> and <b>min</b>. Changing the scenario unit converts related values automatically.</p><p><b>Import Excel</b> can populate Work Data from an Excel workbook, including .xlsx files using the Japanese prototype layout and common English headers.</p>`,
+logic:th?`<h2>Logic การคำนวณ</h2><div class="formula"><b>Operator C/T</b> = Manual + Walking + Waiting + กิจกรรมของ Operator</div><div class="formula"><b>Common Production Qty</b> = LCM(Set Qty)</div><div class="formula"><b>Executions per Process</b> = Common Production Qty ÷ Set Qty</div><div class="formula"><b>Actual Line C/T per piece</b> = MAX(Operator Batch C/T) ÷ Common Production Qty</div><div class="formula"><b>Takt per piece</b> = Available Production Time ÷ Required Quantity</div><div class="formula"><b>Batch Takt</b> = Takt per piece × Common Production Qty</div><p>Machine Auto Timeline แยกจาก Operator Timeline ดังนั้น Auto Time จะไม่ถูกบวกเข้า Operator C/T โดยตรง เว้นแต่ Operator ต้องรอเครื่อง</p><p><b>Per Piece:</b> เวลา Manual/Auto/Auto2 คูณ Set Qty. <b>Per Set:</b> เวลาที่กรอกคือเวลารวมของทั้ง Set.</p>`:`<h2>Calculation Logic</h2><div class="formula"><b>Operator C/T</b> = Manual + Walking + Waiting + operator activities</div><div class="formula"><b>Common Production Qty</b> = LCM(Set Qty)</div><div class="formula"><b>Executions per Process</b> = Common Production Qty ÷ Set Qty</div><div class="formula"><b>Actual Line C/T per piece</b> = MAX(Operator Batch C/T) ÷ Common Production Qty</div><div class="formula"><b>Takt per piece</b> = Available Production Time ÷ Required Quantity</div><div class="formula"><b>Batch Takt</b> = Takt per piece × Common Production Qty</div><p>Machine automatic time runs on a separate timeline and is not added directly to operator C/T unless it causes operator waiting.</p><p><b>Per Piece:</b> Manual/Auto/Auto2 are multiplied by Set Qty. <b>Per Set:</b> entered time is the total for the set.</p>`,
+auto2:th?`<h2>Auto 2 + Frequency</h2><p>เลือกได้ต่อ Process:</p><div class="formula"><b>Replace</b>: เมื่อถึงรอบ Frequency ใช้ Auto 2 แทน Auto ปกติ</div><div class="formula"><b>Add</b>: เมื่อถึงรอบ Frequency ใช้ Auto + Auto 2</div>`:`<h2>Auto 2 + Frequency</h2><p>Per process, choose:</p><div class="formula"><b>Replace</b>: on the frequency cycle, Auto 2 replaces the normal Auto time.</div><div class="formula"><b>Add</b>: on the frequency cycle, Auto 2 is added to the normal Auto time.</div>`,
+walking:th?`<h2>Walking 1–5</h2><p>Walking 1–5 ใช้ร่วมกับ Usage Sequence โดยเฉพาะกรณี Parallel Machine และแต่ละช่องมี Comment ได้ เช่น “เดินไป Machine B” หรือ “หยิบชิ้นงานจาก Buffer”</p><div class="formula">ช่อง Walking ที่เว้นว่าง = <b>0 sec</b> และยังถือว่าเป็นเส้นทางที่ใช้งานได้</div>`:`<h2>Walking 1–5</h2><p>Walking 1–5 works with Usage Sequence, especially for parallel machines. Each walking field has its own comment.</p><div class="formula">Blank Walking value = <b>0 sec</b> and the route is still valid.</div>`,
+ol:th?`<h2>OL / Overlap</h2><p>OL ปิด = ใช้เงื่อนไข Auto ปกติ</p><p>OL เปิด + Overlap ว่าง/0 = ระบบอนุญาต overlap ตามเงื่อนไขอัตโนมัติ</p><p>OL เปิด + Overlap = X = Manual เริ่มก่อน Auto จบได้สูงสุด X</p><p>Auto Handling สามารถเลือก <b>Wait</b> หรือ <b>Skip / Continue</b> ราย Process ได้</p>`:`<h2>OL / Overlap</h2><p>OL Off uses normal automatic-time constraints.</p><p>OL On with zero/blank overlap uses automatic overlap logic.</p><p>OL On with X allows manual work to start up to X before automatic completion.</p><p>Auto Handling can be <b>Wait</b> or <b>Skip / Continue</b> per process.</p>`,
+scenario:th?`<h2>Scenario และ Compare</h2><p>สร้าง Scenario ได้ทั้งแบบ Blank และ Duplicate Current. การ Duplicate จะคัดลอก Process, Operator, Machine, Takt, สี, Setting และข้อมูลกราฟทั้งหมด แล้วจึงแก้เฉพาะจุดที่ต้องการศึกษา</p><p>หน้า Compare แสดง Line C/T, Takt, Bottleneck, Waiting, Walking และ Workload ของหลาย Scenario พร้อมกัน</p>`:`<h2>Scenario & Compare</h2><p>Create scenarios from blank or duplicate the current scenario. Duplication copies processes, operators, machines, takt, settings and chart data.</p><p>Compare view shows Line C/T, Takt, bottleneck, waiting, walking and workload across multiple scenarios.</p>`,
+save:th?`<h2>Save / Load Project</h2><p><b>Save Project</b> จะบันทึก Project และทุก Scenario ลงไฟล์ <code>.yamproj</code> บนคอมพิวเตอร์</p><p><b>Load Project</b> ใช้เปิดไฟล์เดิมกลับมาทำงานต่อได้</p>`:`<h2>Save / Load Project</h2><p><b>Save Project</b> stores the project and all scenarios in a local <code>.yamproj</code> file.</p><p><b>Load Project</b> restores the project for continued work.</p>`};el.innerHTML=(map[key]||map.start)+`<div class="copyright-note">Copyright 2026 Boonyarit Chotisatkul. All rights reserved.</div>`}
+function openSettings(){const s=activeScenario();document.getElementById('setName').value=s.name;document.getElementById('setUnit').value=s.timeUnit;document.getElementById('setTaktMode').value=s.taktMode;document.getElementById('setManualTakt').value=s.manualTakt;document.getElementById('setAvailable').value=s.availableTime;document.getElementById('setDemand').value=s.requiredQty;document.getElementById('setCommonQtyMode').value=s.commonQtyMode||'auto';document.getElementById('setCommonQty').value=s.commonQtyOverride||commonProductionQty(s);showModal(true)}
+function applySettings(){const s=activeScenario();const unit=document.getElementById('setUnit').value;if(unit!==s.timeUnit)convertScenarioUnit(s,unit);s.name=document.getElementById('setName').value||s.name;s.taktMode=document.getElementById('setTaktMode').value;s.manualTakt=Number(document.getElementById('setManualTakt').value)||0;s.availableTime=Number(document.getElementById('setAvailable').value)||0;s.requiredQty=Number(document.getElementById('setDemand').value)||0;s.commonQtyMode=document.getElementById('setCommonQtyMode').value;s.commonQtyOverride=Math.max(1,Math.round(Number(document.getElementById('setCommonQty').value)||1));showModal(false);renderAll()}
+function convertScenarioUnit(s,newUnit){if(s.timeUnit===newUnit)return;const factor=s.timeUnit==='sec'&&newUnit==='min'?1/60:60;const fields=['manual','auto','auto2','overlap'];s.processes.forEach(p=>{fields.forEach(f=>p[f]=(Number(p[f])||0)*factor);p.walk=(p.walk||[0,0,0,0,0]).map(v=>(Number(v)||0)*factor)});s.manualTakt=(Number(s.manualTakt)||0)*factor;s.availableTime=(Number(s.availableTime)||0)*factor;s.timeUnit=newUnit}
+function showModal(on){document.getElementById('settingsModal').classList.toggle('show',on)}
+function saveProject(){const blob=new Blob([JSON.stringify(state.project,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(activeScenario().name||'project').replace(/[^\w\-]+/g,'_')+'.yamproj';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast(t('saved'))}
+async function importExcelWorkData(e){
+ const file=e.target.files?.[0];if(!file)return;
+ try{
+   let rowsBySheet=[];
+   if(typeof XLSX!=='undefined'){
+     const buf=await file.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});
+     rowsBySheet=wb.SheetNames.map(name=>({name,rows:XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,raw:true,defval:null})}));
+   }else if(/\.xlsx$/i.test(file.name)){
+     rowsBySheet=await readXlsxBasic(file);
+   }else{
+     throw new Error('Old .xls requires SheetJS');
+   }
+   let chosen=rowsBySheet.find(sh=>sh.rows.some(r=>String(r?.[0]??'').replace(/\s+/g,'').includes('作業者')))||rowsBySheet.find(sh=>sh.rows.some(r=>r.some(v=>/operator|ผู้ปฏิบัติงาน/i.test(String(v??'')))))||rowsBySheet[0];
+   if(!chosen)throw new Error('No worksheet');
+   const rows=chosen.rows,wsName=chosen.name||'Sheet1';let data=[];
+   let protoRow=rows.findIndex(r=>String(r?.[0]??'').replace(/\s+/g,'').includes('作業者'));
+   if(protoRow>=0){
+     for(let i=protoRow+3;i<rows.length;i++){const r=rows[i]||[];if(r.slice(0,16).every(v=>v===null||v===''))continue;const op=Number(r[0]);if(!Number.isFinite(op)||op<=0)continue;const p=defaultProcess(data.length+1);p.operator=op;p.workSeq=Number(r[1])||1;p.usageSeq=Number(r[2])||1;p.process=String(r[3]??'').trim()||`Process ${data.length+1}`;p.machine=String(r[4]??'').trim();p.setQty=Math.max(1,Number(r[5])||1);p.manual=Number(r[6])||0;p.auto=Number(r[7])||0;p.auto2=Number(r[8])||0;p.frequency=Number(r[9])||0;p.walk=[10,11,12,13,14].map(c=>Number(r[c])||0);p.ol=String(r[15]??'').trim()!==''&&String(r[15]).trim()!=='0';p.basis='perSet';p.category='manual';p.auto2Mode='replace';p.handling='wait';p.walkComment=['','','','','',''];p.comment=`Imported from ${wsName}`;data.push(p)}
+   }else{
+     const headerIndex=rows.findIndex(r=>r.some(v=>/operator|ผู้ปฏิบัติงาน/i.test(String(v??''))));if(headerIndex<0)throw new Error('Header not found');
+     const hdr=(rows[headerIndex]||[]).map(v=>String(v??'').trim().toLowerCase());const col=(...names)=>hdr.findIndex(h=>names.some(n=>h.includes(n)));
+     const ix={op:col('operator','ผู้ปฏิบัติงาน'),seq:col('work seq','sequence','ลำดับงาน'),usage:col('usage','ลำดับใช้งาน'),proc:col('process','กระบวนการ'),mach:col('machine','เครื่องจักร'),set:col('set qty','set','จำนวนต่อ set'),manual:col('manual'),auto:col('auto'),auto2:col('auto 2','auto2'),freq:col('frequency','ความถี่'),ol:col('ol')};
+     for(let i=headerIndex+1;i<rows.length;i++){const r=rows[i]||[];const op=Number(r[ix.op]);if(!Number.isFinite(op)||op<=0)continue;const p=defaultProcess(data.length+1);p.operator=op;p.workSeq=Number(r[ix.seq])||1;p.usageSeq=ix.usage>=0?(Number(r[ix.usage])||1):1;p.process=ix.proc>=0?String(r[ix.proc]??'').trim():`Process ${data.length+1}`;p.machine=ix.mach>=0?String(r[ix.mach]??'').trim():'';p.setQty=ix.set>=0?Math.max(1,Number(r[ix.set])||1):1;p.manual=ix.manual>=0?Number(r[ix.manual])||0:0;p.auto=ix.auto>=0?Number(r[ix.auto])||0:0;p.auto2=ix.auto2>=0?Number(r[ix.auto2])||0:0;p.frequency=ix.freq>=0?Number(r[ix.freq])||0:0;p.ol=ix.ol>=0&&String(r[ix.ol]??'').trim()!=='';p.walk=[0,0,0,0,0];for(let k=0;k<5;k++){const wi=col(`walk ${k+1}`,`walking ${k+1}`,`เดิน ${k+1}`);if(wi>=0)p.walk[k]=Number(r[wi])||0}p.basis='perSet';p.category='manual';p.comment=`Imported from ${wsName}`;data.push(p)}
+   }
+   if(!data.length)throw new Error('No process rows');
+   const sc=activeScenario();sc.processes=data;if(protoRow>=0)sc.timeUnit='min';state.selectedProcessId=null;renderAll();toast(`${t('excelImported')}: ${data.length} rows`);
+ }catch(err){console.error(err);toast(t('excelImportError')+(/\.xls$/i.test(file.name)?' (.xls → please save as .xlsx)':''))}finally{e.target.value=''}
+}
+function xmlDecode(s){return String(s??'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&apos;/g,"'")}
+function colIndexFromRef(ref){let n=0;for(const ch of (ref.match(/[A-Z]+/i)?.[0]||'A').toUpperCase())n=n*26+(ch.charCodeAt(0)-64);return n-1}
+async function unzipXlsxEntries(file){
+ const buf=await file.arrayBuffer(),dv=new DataView(buf),u8=new Uint8Array(buf);let eocd=-1;for(let i=u8.length-22;i>=Math.max(0,u8.length-65557);i--){if(dv.getUint32(i,true)===0x06054b50){eocd=i;break}}if(eocd<0)throw new Error('Invalid ZIP');
+ const count=dv.getUint16(eocd+10,true),cdOffset=dv.getUint32(eocd+16,true),entries={};let p=cdOffset;
+ for(let i=0;i<count;i++){if(dv.getUint32(p,true)!==0x02014b50)break;const method=dv.getUint16(p+10,true),compSize=dv.getUint32(p+20,true),nameLen=dv.getUint16(p+28,true),extraLen=dv.getUint16(p+30,true),commentLen=dv.getUint16(p+32,true),localOff=dv.getUint32(p+42,true),name=new TextDecoder().decode(u8.slice(p+46,p+46+nameLen));entries[name]={method,compSize,localOff};p+=46+nameLen+extraLen+commentLen}
+ async function extract(name){const ent=entries[name];if(!ent)return null;const o=ent.localOff;if(dv.getUint32(o,true)!==0x04034b50)throw new Error('Bad local header');const nl=dv.getUint16(o+26,true),el=dv.getUint16(o+28,true),start=o+30+nl+el,raw=u8.slice(start,start+ent.compSize);if(ent.method===0)return raw;if(ent.method===8){const ds=new DecompressionStream('deflate-raw');return new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(ds)).arrayBuffer())}throw new Error('Unsupported ZIP method')}
+ return {entries,extract}
+}
+async function readXlsxBasic(file){
+ const z=await unzipXlsxEntries(file),dec=new TextDecoder('utf-8');let shared=[];const ss=await z.extract('xl/sharedStrings.xml');if(ss){const xml=dec.decode(ss);shared=[...xml.matchAll(/<si[^>]*>([\s\S]*?)<\/si>/g)].map(m=>{const body=m[1].replace(/<rPh\b[\s\S]*?<\/rPh>/g,'');return xmlDecode([...body.matchAll(/<t[^>]*>([\s\S]*?)<\/t>/g)].map(x=>x[1]).join(''))})}
+ const names=Object.keys(z.entries).filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n)).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));const out=[];
+ for(const name of names){const bytes=await z.extract(name);if(!bytes)continue;const xml=dec.decode(bytes),rows=[];for(const rm of xml.matchAll(/<row\b[^>]*r="(\d+)"[^>]*>([\s\S]*?)<\/row>/g)){const ri=Number(rm[1])-1,row=rows[ri]||[];for(const cm of rm[2].matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)){const attrs=cm[1],body=cm[2],ref=(attrs.match(/\br="([A-Z]+\d+)"/i)||[])[1];if(!ref)continue;const ci=colIndexFromRef(ref),type=(attrs.match(/\bt="([^"]+)"/)||[])[1]||'',vm=(body.match(/<v[^>]*>([\s\S]*?)<\/v>/)||[])[1],tm=[...body.matchAll(/<t[^>]*>([\s\S]*?)<\/t>/g)].map(x=>x[1]).join('');let val=null;if(type==='s')val=shared[Number(vm)]??'';else if(type==='inlineStr')val=xmlDecode(tm);else if(type==='str')val=xmlDecode(vm??tm);else if(vm!=null&&vm!==''){const n=Number(vm);val=Number.isFinite(n)?n:xmlDecode(vm)}row[ci]=val}rows[ri]=row}out.push({name:name.split('/').pop().replace('.xml',''),rows})}
+ return out
+}
+function loadProject(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);if(!p.scenarios||!Array.isArray(p.scenarios))throw new Error();state.project=p;if(!state.project.language)state.project.language='en';state.project.scenarios.forEach(s=>s.processes.forEach(p=>{if(!p.category)p.category='manual'}));state.project.scenarios.forEach(s=>{if(!s.commonQtyMode)s.commonQtyMode='auto';if(!s.commonQtyOverride)s.commonQtyOverride=1});if(!state.project.activeScenarioId||!state.project.scenarios.some(s=>s.id===state.project.activeScenarioId))state.project.activeScenarioId=state.project.scenarios[0].id;state.compareSelected=new Set(state.project.scenarios.slice(0,3).map(s=>s.id));renderAll();toast(t('loaded'))}catch{toast(t('invalidProject'))}};r.readAsText(f);e.target.value=''}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1700)}
+function esc(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function runSelfTests(){
+ const s=defaultScenario('Test');s.processes=[{...defaultProcess(1),manual:10,auto:30,walk:[5,0,0,0,0],operator:1,machine:'A',basis:'perSet',handling:'wait'},{...defaultProcess(2),id:uid(),manual:7,auto:0,walk:[0,0,0,0,0],operator:1,machine:'B',basis:'perSet',handling:'wait'}];s.manualTakt=60;const c=calculateScenario(s);console.assert(Math.abs(c.operatorCT['1']-22)<.001,'Operator CT test');console.assert(Math.abs(c.takt-60)<.001,'Takt test');const s2=defaultScenario('Auto2');s2.processes=[{...defaultProcess(1),manual:0,auto:10,auto2:20,frequency:5,auto2Mode:'replace',walk:[0,0,0,0,0]}];s2.processes[0].setQty=1;s2.processes[0].frequency=1;console.assert(calculateScenario(s2).processResults[s2.processes[0].id].autoActual===20,'Auto2 replace');const s3=defaultScenario('Batch');s3.processes=[{...defaultProcess(1),manual:10,auto:0,walk:[0,0,0,0,0],setQty:1,basis:'perSet'},{...defaultProcess(2),id:uid(),workSeq:2,manual:5,auto:0,walk:[0,0,0,0,0],setQty:2,basis:'perSet'}];const c3=calculateScenario(s3);console.assert(c3.commonQty===2,'Common qty LCM');console.assert(Math.abs(c3.operatorBatchCT['1']-25)<.001,'Batch CT repeat');console.assert(Math.abs(c3.operatorCT['1']-12.5)<.001,'Per piece CT');console.info('Self-tests completed');
+}
+init();
+</script>
+</body>
+</html>
